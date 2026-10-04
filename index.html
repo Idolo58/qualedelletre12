@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quale delle Tre? - Quiz #12</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #606f7b;
+            --primary-color: #1a568c;
+            --border-color: #dce3e9;
+            --btn-bg: #eef4f8;
+            --btn-hover: #d0e1f0;
+            --correct-bg: #e8f5e9;
+            --correct-border: #4caf50;
+            --correct-text: #1b5e20;
+            --wrong-bg: #ffebee;
+            --wrong-border: #f44336;
+            --wrong-text: #b71c1c;
+        }
+
+        /* Modalità Luce Rossa per osservazioni notturne */
+        body.red-mode {
+            --bg-color: #050000;
+            --card-bg: #150000;
+            --text-color: #ff3333;
+            --text-muted: #aa2222;
+            --primary-color: #ff0000;
+            --border-color: #550000;
+            --btn-bg: #2a0000;
+            --btn-hover: #440000;
+            --correct-bg: #200a0a;
+            --correct-border: #ff4444;
+            --correct-text: #ff6666;
+            --wrong-bg: #2a0000;
+            --wrong-border: #990000;
+            --wrong-text: #ff4444;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            padding: 20px; 
+            max-width: 650px; 
+            margin: auto; 
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .red-mode-toggle {
+            background-color: #900;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        body.red-mode .red-mode-toggle {
+            background-color: #ff0000;
+            color: #000;
+        }
+
+        .header-container {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        h1 { 
+            color: var(--primary-color); 
+            font-size: 26px;
+            margin-bottom: 5px;
+            margin-top: 0;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .card { 
+            background-color: var(--card-bg); 
+            padding: 18px; 
+            border-radius: 10px; 
+            margin-bottom: 18px; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .q-title { 
+            font-weight: bold; 
+            margin-bottom: 14px; 
+            color: var(--primary-color); 
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        button.opt-btn { 
+            display: block; 
+            width: 100%; 
+            margin: 8px 0; 
+            padding: 12px 14px; 
+            background-color: var(--btn-bg); 
+            color: var(--text-color); 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            text-align: left; 
+            font-size: 14px; 
+            cursor: pointer; 
+            transition: background-color 0.2s, border-color 0.2s;
+            font-weight: 500;
+        }
+
+        button.opt-btn:hover:not(:disabled) { 
+            background-color: var(--btn-hover); 
+        }
+
+        button.opt-btn:disabled {
+            cursor: default;
+            opacity: 0.9;
+        }
+
+        .feedback { 
+            margin-top: 12px; 
+            display: none; 
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .feedback.correct { 
+            color: var(--correct-text); 
+            background-color: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+        }
+
+        .feedback.wrong { 
+            color: var(--wrong-text); 
+            background-color: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+        }
+
+        .quiz-actions {
+            text-align: center;
+            margin: 30px 0 20px 0;
+        }
+
+        #submit-btn {
+            background-color: #2e7d32;
+            color: #ffffff;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        body.red-mode #submit-btn {
+            background-color: #880000;
+            color: #ff3333;
+            border: 1px solid #ff0000;
+        }
+
+        .restart-btn {
+            margin-top: 15px;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        body.red-mode .restart-btn {
+            color: #000;
+        }
+
+        .result-box {
+            display: none;
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .result-box.visible {
+            display: block;
+        }
+
+        .result-score {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .result-emoji {
+            font-size: 3.8em;
+            margin: 10px 0;
+            line-height: 1;
+        }
+
+        .result-message {
+            font-size: 1.05em;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <button class="red-mode-toggle" onclick="toggleRedMode()">🔴 Luce Rossa Notturna</button>
+</div>
+
+<div class="header-container">
+    <h1>✨ Quale delle Tre? - Quiz #12 ✨</h1>
+    <div class="subtitle">Astronomia Generale, Letteratura ed Arte!</div>
+</div>
+
+<div id="quiz"></div>
+
+<div class="quiz-actions">
+    <button id="submit-btn" onclick="concludiTest()">Verifica Punteggio Finale</button>
+</div>
+
+<div id="result-box" class="result-box">
+    <div id="result-score" class="result-score"></div>
+    <div id="result-emoji" class="result-emoji"></div>
+    <div id="result-message" class="result-message"></div>
+    <button class="restart-btn" onclick="location.reload()">🔄 Ricomincia il Quiz</button>
+</div>
+
+<footer>
+    Realizzato con l'I.A su progetto di idolo tedesco (idolo58-Instagram). San Giorgio del Sannio
+</footer>
+
+<script>
+const domande = [
+    { 
+        q: "1. Nel rinascimentale capolavoro «Gli Ambasciatori» (1533) di Hans Holbein il Giovane, quale raffinato strumento astronomico per la misurazione delle coordinate celesti e dell'ora solare compare sul ripiano superiore del tavolo?", 
+        opts: [
+            "A) Il telescopio rifrattore", 
+            "B) L'astrolabio sferico e il quadrante", 
+            "C) Il sestante ottico moderno"
+        ], 
+        ans: 1,
+        exp: "<strong>Spiegazione:</strong> Sul tavolo di Holbein sono dipinti in dettagliata prospettiva vari strumenti scientifici dell'epoca, tra cui un globo celeste, un quadrante e vari astrolabi."
+    },
+    { 
+        q: "2. Nel capolavoro cavalleresco «Orlando Furioso» di Ludovico Ariosto, quale cavaliere vola sulla Luna a cavallo dell'Ippogrifo per recuperare il senno perduto di Orlando?", 
+        opts: [
+            "A) Astolfo", 
+            "B) Rinaldo", 
+            "C) Bradamante"
+        ], 
+        ans: 0,
+        exp: "<strong>Spiegazione:</strong> È il duca Astolfo a compiere il leggendario viaggio sulla Luna guidato da San Giovanni Evangelista per ritrovare il senno di Orlando contenuto in una boccetta."
+    },
+    { 
+        q: "3. In astronomia generale, come si chiama lo spostamento verso frequenze più basse (lunghezze d'onda maggiori) della luce emessa da galassie in allontanamento da noi?", 
+        opts: [
+            "A) Blueshift (spostamento verso il blu)", 
+            "B) Redshift (spostamento verso il rosso)", 
+            "C) Effetto fotoelettrico"
+        ], 
+        ans: 1,
+        exp: "<strong>Spiegazione:</strong> Il redshift (spostamento verso il rosso) dovuto all'effetto Doppler/espansione dello spazio indica che una sorgente luminosa si sta allontanando dall'osservatore."
+    },
+    { 
+        q: "4. Nel 1914 il pittore futurista Giacomo Balla rimase affascinato dall'osservazione di un passaggio celeste spettacolare e realizzò celebri dipinti dinamici. Di quale astro parlava l'opera?", 
+        opts: [
+            "A) Di una Cometa (passaggio della cometa Halley/M eclipse)", 
+            "B) Di un'Eclisse totale di Sole", 
+            "C) Della Luna Piena di super-luna"
+        ], 
+        ans: 0,
+        exp: "<strong>Spiegazione:</strong> Giacomo Balla fu colto da profonda suggestione visiva dall'osservazione di una cometa nel cielo notturno, da cui nacque la celebre serie «Infezione di cometa»."
+    },
+    { 
+        q: "5. Con quale parola iconica si chiudono tutte e tre le cantiche della Divina Commedia di Dante Alighieri (Inferno, Purgatorio e Paradiso)?", 
+        opts: [
+            "A) Sole", 
+            "B) Luce", 
+            "C) Stelle"
+        ], 
+        ans: 2,
+        exp: "<strong>Spiegazione:</strong> Tutte e tre le cantiche terminano con la parola «stelle» («e quindi uscimmo a riveder le stelle», «puri e disposti a salire a le stelle», «l'amor che move il sole e l'altre stelle»)."
+    },
+    { 
+        q: "6. Quale tra i seguenti quattro satelliti medicei di Giove è il corpo celeste geologicamente più attivo e ricco di vulcani di tutto il Sistema Solare?", 
+        opts: [
+            "A) Europa", 
+            "B) Io", 
+            "C) Ganimede"
+        ], 
+        ans: 1,
+        exp: "<strong>Spiegazione:</strong> Io è sottoposto alle imponenti forze marea scatenate da Giove e dalle altre lune, che mantengono il suo interno fuso generando centinaia di vulcani attivi."
+    },
+    { 
+        q: "7. Quale celebre saggista e scrittore italiano ha dedicato al cosmo la raccolta di racconti «Le Cosmicomiche» (1965), in cui la voce del protagonista Qfwfq narra in chiave poetica la nascita e l'evoluzione dell'Universo?", 
+        opts: [
+            "A) Italo Calvino", 
+            "B) Primo Levi", 
+            "C) Umberto Eco"
+        ], 
+        ans: 0,
+        exp: "<strong>Spiegazione:</strong> Italo Calvino scrisse «Le Cosmicomiche» unendo fantasia letteraria e concetti scientifici ed astronomici con straordinaria originalità."
+    }
+];
+
+const userSelections = new Array(domande.length).fill(null);
+const container = document.getElementById("quiz");
+
+domande.forEach((d, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+        
+    let html = `<div class="q-title">${d.q}</div>`;
+    d.opts.forEach((opt, optIdx) => {
+        html += `<button class="opt-btn" id="btn-${i}-${optIdx}" onclick="check(${i}, ${optIdx})">${opt}</button>`;
+    });
+    html += `<div id="fb-${i}" class="feedback"></div>`;
+        
+    card.innerHTML = html;
+    container.appendChild(card);
+});
+
+function toggleRedMode() {
+    document.body.classList.toggle("red-mode");
+}
+
+function check(qIdx, optIdx) {
+    if (userSelections[qIdx] !== null) return;
+    
+    userSelections[qIdx] = optIdx;
+    
+    const fb = document.getElementById(`fb-${qIdx}`);
+    const data = domande[qIdx];
+    
+    fb.style.display = "block";
+    
+    data.opts.forEach((_, idx) => {
+        const btn = document.getElementById(`btn-${qIdx}-${idx}`);
+        btn.disabled = true;
+        
+        if (idx === optIdx) {
+            btn.style.borderColor = (optIdx === data.ans) ? 'var(--correct-border)' : 'var(--wrong-border)';
+            btn.style.backgroundColor = (optIdx === data.ans) ? 'var(--correct-bg)' : 'var(--wrong-bg)';
+        } else if (idx === data.ans) {
+            btn.style.borderColor = 'var(--correct-border)';
+            btn.style.backgroundColor = 'var(--correct-bg)';
+        } else {
+            btn.style.borderColor = 'var(--border-color)';
+            btn.style.backgroundColor = 'var(--btn-bg)';
+        }
+    });
+
+    if (optIdx === data.ans) {
+        fb.className = "feedback correct";
+        fb.innerHTML = `✓ <strong>Esatto!</strong> ${data.exp}`;
+    } else {
+        fb.className = "feedback wrong";
+        fb.innerHTML = `✗ <strong>Errato.</strong> La risposta corretta era la <strong>${data.opts[data.ans]}</strong>.<br>${data.exp}`;
+    }
+}
+
+function concludiTest() {
+    let score = 0;
+    domande.forEach((d, i) => {
+        if (userSelections[i] === d.ans) {
+            score++;
+        }
+    });
+
+    const resultBox = document.getElementById('result-box');
+    const resultScore = document.getElementById('result-score');
+    const resultEmoji = document.getElementById('result-emoji');
+    const resultMessage = document.getElementById('result-message');
+
+    resultScore.innerText = `Punteggio Finale: ${score} su ${domande.length}`;
+
+    if (score <= 2) {
+        resultEmoji.innerText = "😢";
+        resultMessage.innerText = "Peccato! Rileggi le spiegazioni per ciascun quesito e riprova il test per migliorare!";
+    } else if (score <= 4) {
+        resultEmoji.innerText = "🙂";
+        resultMessage.innerText = "Buon tentativo! Hai una discreta conoscenza di base, puoi fare ancora meglio!";
+    } else if (score <= 6) {
+        resultEmoji.innerText = "😊";
+        resultMessage.innerText = "Molto bene! Dimostri un'ottima preparazione complessiva!";
+    } else {
+        resultEmoji.innerText = "🤩";
+        resultMessage.innerText = "Eccellente! Punteggio pieno, sei un vero esperto di astronomia, letteratura e arte!";
+    }
+
+    resultBox.classList.add('visible');
+    resultBox.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
